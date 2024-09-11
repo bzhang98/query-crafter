@@ -16,6 +16,12 @@
 - **File Type Filter**: Filter results by specific file types (e.g., .pdf, .doc).
 - **User-Friendly Interface**: Intuitive and easy-to-use UI for query creation.
 
+## Live Demo
+
+Check out the live demo here:
+
+[https://query-crafter.vercel.app/](https://query-crafter.vercel.app/)
+
 ## Usage
 
 1. Open QueryCraft in your browser.
