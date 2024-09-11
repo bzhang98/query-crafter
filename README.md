@@ -15,3 +15,16 @@
   - **URL**: Search within the URLs of web pages.
 - **File Type Filter**: Filter results by specific file types (e.g., .pdf, .doc).
 - **User-Friendly Interface**: Intuitive and easy-to-use UI for query creation.
+
+## Usage
+
+1. Open QueryCraft in your browser.
+2. Use the provided input fields to specify your search parameters:
+   - **Base**: Enter the main keywords for your search.
+   - **Exact Match**: Specify any terms that should appear exactly as entered.
+   - **Exclude**: List terms to exclude from the search results.
+   - **Domain**: Define any specific domains to limit the search to.
+   - **Search Location**: Choose where to search (text, title, or URL).
+   - **File Type**: Select the file types to filter results (e.g., .pdf, .doc).
+3. Click on the **Generate Query** button to create your advanced search query.
+4. Copy and use the generated query in Google Search.
