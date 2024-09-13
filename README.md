@@ -1,6 +1,6 @@
-# QueryCraft
+# Query Crafter
 
-**QueryCraft** is a tool designed to help you create advanced Google search queries effortlessly. Whether you're a researcher, marketer, or simply someone who wants to refine their search results, QueryCraft enables you to construct precise and effective search queries using various parameters.
+**Query Crafter** is a tool designed to help you create advanced Google search queries effortlessly. Whether you're a researcher, marketer, or simply someone who wants to refine their search results, QueryCraft enables you to construct precise and effective search queries using various parameters.
 
 ## Features
 
