@@ -1,7 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Search, Clipboard, RotateCcw, Link, Sun, Moon } from "lucide-react";
+import {
+  Search,
+  Clipboard,
+  RotateCcw,
+  Link,
+  Sun,
+  Moon,
+  History,
+  RectangleEllipsis,
+  CircleX,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +31,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "./ThemeContext";
 import { useToast } from "./hooks/use-toast";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const formSchema = z.object({
   base: z.string().min(1, "Enter at least one keyword"),
@@ -53,10 +73,77 @@ function ThemeToggle() {
   );
 }
 
+function addToHistory(query: {
+  base: string;
+  exactMatch: string;
+  exclude: string;
+  domain: string;
+  termsAppearing: string;
+  fileType: string;
+}) {
+  const history = JSON.parse(localStorage.getItem("history") || "[]");
+
+  if (history.includes(query)) {
+    return;
+  }
+
+  history.push(query);
+  localStorage.setItem("history", JSON.stringify(history));
+}
+
+function generateSearchString(values: z.infer<typeof formSchema>) {
+  let searchString = "";
+
+  switch (values.termsAppearing) {
+    case "title":
+      searchString += "allintitle: ";
+      break;
+    case "text":
+      searchString += "allintext: ";
+      break;
+    case "url":
+      searchString += "allinurl: ";
+      break;
+    case "links":
+      searchString += "allinanchor: ";
+      break;
+  }
+
+  searchString += values.base;
+
+  if (values.exactMatch) {
+    values.exactMatch.split(",").forEach((word) => {
+      word.length > 0 && (searchString += ` "${word.trim()}"`);
+    });
+  }
+
+  if (values.exclude) {
+    values.exclude.split(",").forEach((word) => {
+      word.length > 0 && (searchString += ` -"${word.trim()}"`);
+    });
+  }
+
+  if (values.domain) {
+    searchString += ` site:${values.domain}`;
+  }
+
+  if (values.fileType !== "any") {
+    searchString += ` filetype:${values.fileType}`;
+  }
+
+  return searchString;
+}
+
 function App() {
   const [searchString, setSearchString] = useState("");
   const { isDarkTheme } = useTheme();
   const { toast } = useToast();
+  const [history, setHistory] = useState<string[]>([]);
+
+  useEffect(() => {
+    const history = JSON.parse(localStorage.getItem("history") || "[]");
+    setHistory(history);
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,45 +158,12 @@ function App() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    let searchString = "";
+    const searchString = generateSearchString(values);
 
-    switch (values.termsAppearing) {
-      case "title":
-        searchString += "allintitle: ";
-        break;
-      case "text":
-        searchString += "allintext: ";
-        break;
-      case "url":
-        searchString += "allinurl: ";
-        break;
-      case "links":
-        searchString += "allinanchor: ";
-        break;
-    }
-
-    searchString += values.base;
-
-    if (values.exactMatch) {
-      values.exactMatch.split(",").forEach((word) => {
-        word.length > 0 && (searchString += ` "${word.trim()}"`);
-      });
-    }
-
-    if (values.exclude) {
-      values.exclude.split(",").forEach((word) => {
-        word.length > 0 && (searchString += ` -"${word.trim()}"`);
-      });
-    }
-
-    if (values.domain) {
-      searchString += ` site:${values.domain}`;
-    }
-
-    if (values.fileType !== "any") {
-      searchString += ` filetype:${values.fileType}`;
-    }
     setSearchString(searchString);
+    addToHistory(values as any);
+    const history = JSON.parse(localStorage.getItem("history") || "[]");
+    setHistory(history);
   }
 
   function onReset() {
@@ -300,9 +354,82 @@ function App() {
             <Button type="submit" className="mr-2">
               <Search className="mr-2 h-4 w-4" /> Generate search string
             </Button>
-            <Button type="button" variant="outline" onClick={onReset}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onReset}
+              className="mr-2"
+            >
               <RotateCcw className="mr-2 h-4 w-4" /> Reset
             </Button>
+            <Dialog>
+              <DialogTrigger className="flex items-center gap-2 hover:underline">
+                <History />
+                History
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="flex gap-2 items-center">
+                    Search History <History />
+                  </DialogTitle>
+                </DialogHeader>
+                <DialogDescription>
+                  <ul className="flex flex-col gap-4">
+                    {history.map((query, index) => (
+                      <li
+                        key={index}
+                        className="flex justify-between items-center gap-2"
+                      >
+                        {generateSearchString(query as any)}
+                        <div className="actions flex gap-2">
+                          <DialogClose asChild>
+                            <Button
+                              onClick={() => {
+                                form.reset(query as any);
+                                setSearchString(
+                                  generateSearchString(query as any)
+                                );
+                              }}
+                            >
+                              <RectangleEllipsis className="mr-2 h-4 w-4" />{" "}
+                              Autofill
+                            </Button>
+                          </DialogClose>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                generateSearchString(query as any)
+                              );
+                              toast({
+                                title: "Search query copied to clipboard",
+                                description: `${generateSearchString(
+                                  query as any
+                                )}`,
+                              });
+                            }}
+                          >
+                            <Clipboard className="mr-2 h-4 w-4" /> Copy
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </DialogDescription>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="destructive" className="w-full" onClick={() => {
+                      localStorage.removeItem("history");
+                      setHistory([]);
+                      
+                    }}>
+                      <CircleX className="mr-2 h-4 w-4" />
+                      Clear History
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </form>
         </Form>
         <div className="mt-6">
@@ -321,7 +448,7 @@ function App() {
                     variant: "destructive",
                     title: "No search query to copy",
                     description: "Generate a search query first",
-                  })
+                  });
                   return;
                 }
                 navigator.clipboard.writeText(searchString);
