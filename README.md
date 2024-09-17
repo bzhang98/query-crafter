@@ -1,50 +1,36 @@
-# React + TypeScript + Vite
+# Query Crafter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Query Crafter** is a tool designed to help you create advanced Google search queries effortlessly. Whether you're a researcher, marketer, or simply someone who wants to refine their search results, QueryCraft enables you to construct precise and effective search queries using various parameters.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Custom Query Builder**: Design complex search queries using multiple parameters.
+- **Base Search**: Specify the core keywords or phrases.
+- **Exact Match**: Include terms that must appear exactly as specified.
+- **Exclude Terms**: Filter out unwanted results by excluding specific terms.
+- **Domain Filter**: Limit your search to specific domains.
+- **Search Location**: Choose where to search:
+  - **Text**: Search within the text of web pages.
+  - **Title**: Search within the titles of web pages.
+  - **URL**: Search within the URLs of web pages.
+- **File Type Filter**: Filter results by specific file types (e.g., .pdf, .doc).
+- **User-Friendly Interface**: Intuitive and easy-to-use UI for query creation.
 
-## Expanding the ESLint configuration
+## Live Demo
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Check out the live demo here:
 
-- Configure the top-level `parserOptions` property like this:
+[https://query-crafter.vercel.app/](https://query-crafter.vercel.app/)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Usage
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. Open QueryCraft in your browser.
+2. Use the provided input fields to specify your search parameters:
+   - **Base**: Enter the main keywords for your search.
+   - **Exact Match**: Specify any terms that should appear exactly as entered.
+   - **Exclude**: List terms to exclude from the search results.
+   - **Domain**: Define any specific domains to limit the search to.
+   - **Search Location**: Choose where to search (text, title, or URL).
+   - **File Type**: Select the file types to filter results (e.g., .pdf, .doc).
+3. Click on the **Generate Query** button to create your advanced search query.
+4. Copy and use the generated query in Google Search.
